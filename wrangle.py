@@ -25,6 +25,17 @@ def acquire_zillow():
 
     return df
 
+def get_zillow_data():
+    if os.path.isfile('zillow.csv'):
+        # If csv file exists read in data from csv file.
+        df = pd.read_csv('zillow.csv', index_col=0)
+    else:
+        # Read fresh data from db into a dataframe
+        df = acquire_zillow()
+        # Cache data
+        df.to_csv('zillow.csv')
+    return df   
+
 def wrangle_zillow(df):
     
     # Drop nulls
