@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
 
 from env import get_connection
 import os
@@ -25,6 +26,7 @@ def acquire_zillow():
     return df
 
 def wrangle_zillow(df):
+    
     # Drop nulls
     df = df.dropna()
     
@@ -43,7 +45,19 @@ def wrangle_zillow(df):
     # Save to csv
     df.to_csv('zillow_data.csv',index=False)
 
-    return df 
+    return df
+
+
+def split_train_val_test(df):
+    #split data
+    seed = 42
+
+    train, val_test = train_test_split(df, train_size=0.7,
+                                    random_state=seed)
+
+    val, test = train_test_split(val_test, train_size=0.5,
+                                random_state=seed)
+    return train, val, test
 
 def scale_train_val_test(train, val, test):
 
