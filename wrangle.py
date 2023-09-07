@@ -58,6 +58,16 @@ def wrangle_zillow(df):
 
     return df
 
+def drop_zeros(df):
+    df = df[(df['bedrooms'] != 0) & (df['bathrooms'] != 0)]
+    return df
+
+def zillow_pipeline():
+    df = get_zillow_data()
+    df = wrangle_zillow(df)
+    df = drop_zeros(df)
+    return df
+
 
 def split_train_val_test(df):
     #split data
@@ -70,15 +80,23 @@ def split_train_val_test(df):
                                 random_state=seed)
     return train, val, test
 
+
 def scale_train_val_test(train, val, test):
 
     mms = MinMaxScaler()
 
-    mms.fit(train[['year_built']])
-
-    train['year_built'] = mms.transform(train[['year_built']])
-    val['year_built'] = mms.transform(val[['year_built']])
-    test['year_built'] = mms.transform(test[['year_built']])
+    # Fit the scaler on the training data for all columns you want to scale
+    columns_to_scale = ['year_built', 'taxamount', 'area']
+    mms.fit(train[columns_to_scale])
+    
+    # Transform the specified columns for each dataset
+    train[columns_to_scale] = mms.transform(train[columns_to_scale])
+    val[columns_to_scale] = mms.transform(val[columns_to_scale])
+    test[columns_to_scale] = mms.transform(test[columns_to_scale])
     
     return train, val, test
 
+def xy_split(df):
+    
+    
+    return df.drop(columns=['tax_value']), df.tax_value
