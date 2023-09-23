@@ -53,6 +53,7 @@ def wrangle_zillow(df):
     df.year_built = df.year_built.astype('int')
     df.fips = df.fips.astype('int')
 
+    df = df.drop(['taxamount'], axis=1)
     # Save to csv
     df.to_csv('zillow_data.csv',index=False)
 
@@ -86,7 +87,29 @@ def scale_train_val_test(train, val, test):
     mms = MinMaxScaler()
 
     # Fit the scaler on the training data for all columns you want to scale
-    columns_to_scale = ['year_built', 'taxamount', 'area']
+    columns_to_scale = ['year_built', 'area'] # 'taxamount',
+    mms.fit(train[columns_to_scale])
+    
+    # Transform the specified columns for each dataset
+    train[columns_to_scale] = mms.transform(train[columns_to_scale])
+    val[columns_to_scale] = mms.transform(val[columns_to_scale])
+    test[columns_to_scale] = mms.transform(test[columns_to_scale])
+    
+    return train, val, test
+
+
+def scale_train_val_test2(train, val, test):
+
+    mms = MinMaxScaler()
+
+    # Fit the scaler on the training data for all columns you want to scale
+    columns_to_scale = ['bedrooms', 'bathrooms', 'area', 'year_built',
+       'total_rooms', 'property_age', 'county_6037', 'county_6059',
+       'county_6111', 'size_per_bedroom', 'bathroom_to_bedroom_ratio',
+       'property_size_category_small', 'property_size_category_medium',
+       'property_size_category_large', 'property_age_group_very_new',
+       'property_age_group_new', 'property_age_group_mid-aged',
+       'property_age_group_old', 'property_age_group_very_old'] # 'taxamount',
     mms.fit(train[columns_to_scale])
     
     # Transform the specified columns for each dataset
